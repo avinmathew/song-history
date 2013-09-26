@@ -1,0 +1,34 @@
+﻿<Window x:Class="SongHistory.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Song History" Height="350" Width="525">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Margin="3">Email Address</Label>
+                <TextBox Grid.Row="0" Grid.Column="1" Margin="3" Name="txtEmail" />
+                <Label Grid.Row="1" Grid.Column="0" Margin="3">Password</Label>
+                <PasswordBox Grid.Row="1" Grid.Column="1" Margin="3" Name="txtPassword" />
+                <Label Grid.Row="2" Grid.Column="0" Margin="3">Spreadsheet</Label>
+                <TextBox Grid.Row="2" Grid.Column="1" Margin="3" Name="txtSpreadsheet" />
+            </Grid>
+            <Button Content="Get History" Height="25" Margin="3" Click="GetHistory_Click" />
+        </StackPanel>
+        <DataGrid Name="dataGrid" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Song" Binding="{Binding Song}"/>
+                <DataGridTextColumn Header="Number of Times" Binding="{Binding NumberOfTimes}"/>
+                <DataGridTextColumn Header="Last Sung" Binding="{Binding LastSungString}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>
