@@ -79,7 +79,6 @@
     </Compile>
     <Compile Include="Data\Song.cs" />
     <Compile Include="Data\SongHistoryService.cs" />
-    <Compile Include="Data\SongList.cs" />
     <Compile Include="Data\UnsungResult.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -104,7 +103,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

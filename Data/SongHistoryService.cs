@@ -12,7 +12,7 @@ namespace SongHistory.Data
         private string _spreadsheet;
 
         private List<string> _allSongs = new List<string>();
-        private List<SongList> _songLists = new List<SongList>();
+        private List<Song> _songs = new List<Song>();
 
         public SongHistoryService(string email, string password, string spreadsheet)
         {
@@ -34,16 +34,13 @@ namespace SongHistory.Data
                 results.Add(song, new UnsungResult(song));
             }
 
-            foreach (var songList in _songLists)
+            foreach (var song in _songs)
             {
-                foreach (var song in songList.Songs)
+                UnsungResult data;
+                if (results.TryGetValue(song.Name, out data)) // Ignore unknown songs
                 {
-                    UnsungResult data;
-                    if (results.TryGetValue(song.Title, out data)) // Ignore unknown songs
-                    {
-                        data.NumberOfTimes++;
-                        data.LastSung = songList.Date > data.LastSung ? songList.Date : data.LastSung;
-                    }
+                    data.NumberOfTimes++;
+                    data.LastSung = song.Date > data.LastSung ? song.Date : data.LastSung;
                 }
             }
 
@@ -61,11 +58,7 @@ namespace SongHistory.Data
             var doc = (SpreadsheetEntry)feed.Entries.Single(e => e.Title.Text == _spreadsheet);
 
             AddAllSongs(service, doc);
-
-            foreach (WorksheetEntry entry in doc.Worksheets.Entries.Where(e => e.Title.Text != "Songs"))
-            {
-                AddSongList(service, entry);
-            }
+            AddSelectedSongs(service, doc);
         }
 
         private void AddAllSongs(SpreadsheetsService service, SpreadsheetEntry doc)
@@ -82,23 +75,21 @@ namespace SongHistory.Data
             }
         }
 
-        private void AddSongList(SpreadsheetsService service, WorksheetEntry entry)
+        private void AddSelectedSongs(SpreadsheetsService service, SpreadsheetEntry doc)
         {
-            var date = DateTime.Parse(entry.Title.Text);
-            var songList = new SongList(date);
-
-            var cellQuery = new CellQuery(entry.CellFeedLink);
-            cellQuery.MaximumColumn = 2;
+            var selectedSheet = doc.Worksheets.Entries.Single(e => e.Title.Text == "Selected") as WorksheetEntry;
+            var cellQuery = new CellQuery(selectedSheet.CellFeedLink);
+            cellQuery.MaximumColumn = 3;
+            cellQuery.MinimumRow = 2;
             var cellFeed = service.Query(cellQuery);
 
-            for (int i = 0; i < cellFeed.Entries.Count; i += 2)
+            for (int i = 0; i < cellFeed.Entries.Count; i += 3)
             {
-                var section = ((CellEntry)cellFeed.Entries[i]).InputValue;
-                var title = ((CellEntry)cellFeed.Entries[i + 1]).InputValue;
-                songList.Songs.Add(new Song(title, section));
+                var date = ((CellEntry)cellFeed.Entries[i]).InputValue;
+                var section = ((CellEntry)cellFeed.Entries[i + 1]).InputValue;
+                var name = ((CellEntry)cellFeed.Entries[i + 2]).InputValue;
+                _songs.Add(new Song(DateTime.Parse(date), section, name));
             }
-
-            _songLists.Add(songList);
         }
     }
 }

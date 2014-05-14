@@ -1,13 +1,17 @@
-﻿namespace SongHistory.Data
+﻿using System;
+
+namespace SongHistory.Data
 {
     public class Song
     {
-        public string Title { get; set; }
+        public DateTime Date { get; set; }
         public string Section { get; set; }
+        public string Name { get; set; }
 
-        public Song(string title, string section)
+        public Song(DateTime date, string section, string name)
         {
-            Title = title;
+            Date = date;
+            Name = name;
             Section = section;
         }
     }
